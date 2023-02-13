@@ -2,12 +2,9 @@ using UnityEngine;
 
 public class ScaledCamera : MonoBehaviour
 {
-    [SerializeField]
-    private Camera localCamera;
-    [SerializeField]
-    private float unscaledFarClipPlane = 1e14f;
-    [SerializeField]
-    private float nearClipOffset = 1f;
+    [SerializeField] private Camera localCamera;
+    [SerializeField] private float unscaledFarClipPlane = 1e14f;
+    [SerializeField] private float nearClipOffset = 1f;
     private Camera thisCamera;
 
     private void Start()
@@ -17,10 +14,10 @@ public class ScaledCamera : MonoBehaviour
 
     private void Update()
     {
-        transform.position = (ReferanceFrameController.Instance.localPosition.ToVector3() / Constant.SCALE) - ReferanceFrameController.Instance.scaledOriginPosition.ToVector3();
+        transform.position = (Vector3)(ReferanceFrameController.Instance.localPosition * Constant.INVERSE_SCALE - ReferanceFrameController.Instance.scaledOriginPosition);
         transform.rotation = localCamera.transform.rotation;
 
-        thisCamera.nearClipPlane = localCamera.farClipPlane * nearClipOffset / Constant.SCALE;
-        thisCamera.farClipPlane = unscaledFarClipPlane / Constant.SCALE;
+        thisCamera.nearClipPlane = localCamera.farClipPlane * nearClipOffset * Constant.INVERSE_SCALE;
+        thisCamera.farClipPlane = unscaledFarClipPlane * Constant.INVERSE_SCALE;
     }
 }

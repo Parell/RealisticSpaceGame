@@ -5,7 +5,7 @@ public class TimeUI : MonoBehaviour
 {
     public SimulationController simulationController;
     public int timeScale = 0;
-    public int timeIndex;
+    public static int timeIndex;
     public int maxTimeIndex = 6;
     public Text timeText;
     public int[] timeScales;
@@ -15,11 +15,6 @@ public class TimeUI : MonoBehaviour
     public KeyCode stopTimeKeyCode = KeyCode.Slash;
 
     private void Start()
-    {
-        Initalize();
-    }
-
-    public void Initalize()
     {
         timeScale = timeScales[0];
         SetButtons();
@@ -44,16 +39,12 @@ public class TimeUI : MonoBehaviour
             if (timeIndex == maxTimeIndex)
             {
                 SetButtons();
-
-                timeScale = timeScales[timeIndex];
             }
             else
             {
                 timeIndex++;
 
                 SetButtons();
-
-                timeScale = timeScales[timeIndex];
             }
 
         }
@@ -62,8 +53,6 @@ public class TimeUI : MonoBehaviour
             if (timeIndex == 0)
             {
                 SetButtons();
-
-                timeScale = timeScales[timeIndex];
             }
             else
             {
@@ -71,7 +60,6 @@ public class TimeUI : MonoBehaviour
 
                 SetButtons();
 
-                timeScale = timeScales[timeIndex];
             }
         }
         else if (Input.GetKeyUp(stopTimeKeyCode))
@@ -79,9 +67,10 @@ public class TimeUI : MonoBehaviour
             timeIndex = 0;
 
             SetButtons();
-
-            timeScale = timeScales[timeIndex];
         }
+
+        timeScale = timeScales[timeIndex];
+        //timeScale = Mathf.RoundToInt(Mathf.MoveTowards(timeScale, timeScales[timeIndex], 1000 * Time.deltaTime));
 
         if (timeIndex >= maxTimeIndex)
         {
@@ -108,6 +97,38 @@ public class TimeUI : MonoBehaviour
             {
                 timeVisuals[i].SetActive(false);
             }
+        }
+    }
+
+    public static void WarpTo(double timeToWarpTo)
+    {
+        var time = SimulationController.Instance.universalTime;
+
+        var timeLeft = timeToWarpTo - time;
+
+        if (timeLeft > 1024)
+        {
+            timeIndex = 5;
+        }
+        else if (timeLeft > 512)
+        {
+            timeIndex = 4;
+        }
+        else if (timeLeft > 64)
+        {
+            timeIndex = 3;
+        }
+        else if (timeLeft > 16)
+        {
+            timeIndex = 2;
+        }
+        else if (timeLeft > 4)
+        {
+            timeIndex = 1;
+        }
+        else
+        {
+            timeIndex = 0;
         }
     }
 }

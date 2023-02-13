@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Vessel), typeof(Body))]
@@ -153,4 +154,55 @@ public class Mover : MonoBehaviour
             }
         }
     }
+
+    //public Hashtable torques;
+    //public Hashtable forces;
+
+    //void Start()
+    //{
+    //    torques = new Hashtable();
+    //    forces = new Hashtable();
+    //}
+
+    //public void AddTorque(string identifier, Vector3 torque)
+    //{
+    //    if (torques.ContainsKey(identifier)) return;
+    //    torques.Add(identifier, torque);
+    //}
+
+    //public void RemoveTorque(string identifier)
+    //{
+    //    if (!torques.ContainsKey(identifier)) return;
+    //    torques.Remove(identifier);
+    //}
+
+    //public void AddForce(string identifier, Vector3 force)
+    //{
+    //    if (forces.ContainsKey(identifier)) return;
+    //    forces.Add(identifier, force);
+    //}
+
+    //public void RemoveForce(string identifier)
+    //{
+    //    if (!forces.ContainsKey(identifier)) return;
+    //    forces.Remove(identifier);
+    //}
+
+    //void HandleTorques()
+    //{
+    //    foreach (DictionaryEntry entry in torques)
+    //    {
+    //        Vector3 torque = (Vector3)entry.Value;
+    //        //rigidbody.AddRelativeTorque(torque.normalized);
+    //    }
+    //}
+
+    //void HandleForces()
+    //{
+    //    foreach (DictionaryEntry entry in forces)
+    //    {
+    //        Vector3 force = (Vector3)entry.Value;
+    //        //rigidbody.AddRelativeForce(force);
+    //    }
+    //}
 }

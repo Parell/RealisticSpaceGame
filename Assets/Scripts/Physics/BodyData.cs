@@ -163,9 +163,9 @@ public class BodyData
         }
     }
 
-    public void AddAcceleration(float acceleration, float deltaTime)
+    public void AddAcceleration(float acceleration, float deltaTime, Vector3 deltaV)
     {
-        Vector3 direction = (Vector3)velocity.normalized;
+        Vector3 direction = deltaV.normalized;
 
         velocity += (Vector3d)direction * acceleration * deltaTime;
     }

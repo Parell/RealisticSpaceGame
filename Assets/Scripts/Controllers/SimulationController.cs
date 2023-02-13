@@ -89,11 +89,30 @@ public class SimulationController : MonoBehaviour
                 predictionTimer = predictionInterval;
                 UpdateOrbits();
             }
+
+            for (int j = 0; j < bodyData.Length; j++)
+            {
+                transform.position = (Vector3)(bodies[j].position - endlessController.originPosition);
+
+                if (bodies[j].scaledTransform)
+                {
+                    bodies[j].scaledTransform.position = (Vector3)((bodies[j].position / Constant.SCALE) - endlessController.scaledOriginPosition);
+                }
+            }
         }
         else
         {
             FindBodies();
             UpdateOrbits();
+
+            for (int j = 0; j < bodyData.Length; j++)
+            {
+                if (bodies[j].scaledTransform)
+                {
+                    transform.position = bodies[j].scaledTransform.position * Constant.SCALE - (Vector3)endlessController.scaledOriginPosition;
+                    bodies[j].position = (Vector3d)transform.position;
+                }
+            }
         }
     }
 
@@ -131,7 +150,6 @@ public class SimulationController : MonoBehaviour
 
     private void UpdateOrbits()
     {
-
         virtualBodyData = new BodyData[bodies.Count];
         Vector3[][] drawPoints = new Vector3[bodies.Count][];
 
@@ -149,16 +167,17 @@ public class SimulationController : MonoBehaviour
                 referenceBodyInitialPosition = virtualBodyData[i].position;
             }
 
-            //if (orbits[i].GetComponent<OrbitManeuver>())
+            //if (bodies[i].GetComponent<VesselManeuvers>())
             //{
-            //    maneuvers = new List<Maneuver>(orbits[i].GetComponent<OrbitManeuver>().maneuvers.Count);
+            //    var maneuvers = new List<Maneuver>(bodies[i].GetComponent<VesselManeuvers>().maneuvers.Count);
 
-            //    orbits[i].GetComponent<OrbitManeuver>().maneuvers.ForEach((item) =>
+            //    bodies[i].GetComponent<VesselManeuvers>().maneuvers.ForEach((item) =>
             //    {
             //        maneuvers.Add(new Maneuver(item));
             //    });
             //}
         }
+        //double burnTime = bodies[2].GetComponent<VesselManeuvers>().maneuvers[0].burnTime;
 
         for (int step = 0; step < steps; step++)
         {
@@ -166,23 +185,25 @@ public class SimulationController : MonoBehaviour
 
             virtualBodyData = Propagate(virtualBodyData, stepSize);
 
+
             for (int i = 0; i < virtualBodyData.Length; i++)
             {
                 if (bodies[i].GetComponent<VesselManeuvers>())
                 {
-                    var maneuvers = new Maneuver(bodies[i].GetComponent<VesselManeuvers>().maneuvers[0]);
+                    var maneuver = bodies[i].GetComponent<VesselManeuvers>();
 
                     //for (int j = 0; j < maneuvers.Count; j++)
                     //{
-                    if ((step * stepSize) >= maneuvers.startTime)
-                    {
-                        if (maneuvers.burnTime > 0)
-                        {
-                            virtualBodyData[i].AddAcceleration(maneuvers.acceleration, stepSize);
 
-                            maneuvers.burnTime -= stepSize;
-                        }
-                    }
+                    //if ((step * stepSize) >= maneuver.maneuvers[0].startTime)
+                    //{
+                    //    if (burnTime > 0)
+                    //    {
+                    //        virtualBodyData[i].AddAcceleration(maneuver.maneuvers[0].acceleration, stepSize, maneuver.maneuvers[0].deltaV);
+
+                    //        burnTime -= stepSize;
+                    //    }
+                    //}
                     //}
                 }
 
@@ -203,7 +224,7 @@ public class SimulationController : MonoBehaviour
                 }
                 else
                 {
-                    drawPoints[i][step] = (Vector3)(nextPosition - endlessController.localOriginPosition);
+                    drawPoints[i][step] = (Vector3)(nextPosition - endlessController.originPosition);
                 }
             }
         }

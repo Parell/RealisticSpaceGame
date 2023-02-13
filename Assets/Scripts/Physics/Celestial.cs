@@ -19,6 +19,13 @@ public class Celestial : MonoBehaviour
         CalculateMass();
     }
 
+    [ContextMenu("Calculate Mass")]
+    private void CalculateMass()
+    {
+        GetComponent<Body>().mass = surfaceGravity * (radius * radius) / Constant.G;
+    }
+
+# if UNITY_EDITOR
     [ContextMenu("Generate Celestial")]
     private void GenerateCelestial()
     {
@@ -27,12 +34,6 @@ public class Celestial : MonoBehaviour
         body.GenerateScaledObject();
 
         ExportMesh();
-    }
-
-    [ContextMenu("Calculate Mass")]
-    private void CalculateMass()
-    {
-        GetComponent<Body>().mass = surfaceGravity * (radius * radius) / Constant.G;
     }
 
     [ContextMenu("Export Mesh")]
@@ -71,7 +72,6 @@ public class Celestial : MonoBehaviour
         }
     }
 
-#if UNITY_EDITOR
     public void SaveMesh(Mesh mesh, string name, bool makeNewInstance, bool optimizeMesh)
     {
         string fullPath = path + name + ".asset";

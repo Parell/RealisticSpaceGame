@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[ExecuteAlways]
 public class Body : MonoBehaviour
 {
     public int index;
@@ -28,22 +27,9 @@ public class Body : MonoBehaviour
         scaledTransform.gameObject.AddComponent<MeshRenderer>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (Application.isPlaying)
-        {
-            transform.position = (Vector3)(position - ReferanceFrameController.Instance.localOriginPosition);
-
-            if (scaledTransform)
-            {
-                scaledTransform.position = (Vector3)((position / Constant.SCALE) - ReferanceFrameController.Instance.scaledOriginPosition);
-            }
-        }
-        else if (scaledTransform)
-        {
-            transform.position = scaledTransform.position * Constant.SCALE;
-            position = (Vector3d)transform.position;
-        }
+        transform.position = (Vector3)(position - ReferanceFrameController.Instance.originPosition);
     }
 
     public void AddForce(Vector3 force, double deltaTime)

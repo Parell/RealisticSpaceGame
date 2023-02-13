@@ -1,74 +1,49 @@
-using System.Collections.Generic;
 using UnityEngine;
 
+// Keeps local camera inside a threshold by moving the target to the world origin and other objects in the targets negitive delta
 public class ReferanceFrameController : MonoBehaviour
 {
     public static ReferanceFrameController Instance;
-    public int originThreshold = 5000;
-    [SerializeField]
-    private Transform localCamera;
-    [SerializeField]
-    private Transform scaledCamera;
-    public Vector3d localPosition;
-    public Vector3d localOriginPosition;
-    public Vector3d scaledPosition;
-    public Vector3d scaledOriginPosition;
-    [SerializeField]
-    private List<Transform> localTransforms;
-    [SerializeField]
-    private List<Transform> scaledTransforms;
+
+    [SerializeField] private float targetThreshold = 10;
+    [SerializeField] private Transform localCamera; // Must be parent object
+    [SerializeField] private Transform scaledCamera;
+    public Vector3d localPosition { get; private set; }
+    public Vector3d scaledPosition { get; private set; }
+    public Vector3d originPosition { get; private set; }
+    public Vector3d scaledOriginPosition { get; private set; }
 
     private void Start()
     {
-        Instance = this;
-
-        RegisterTransform(localCamera);
-        RegisterTransformScaled(scaledCamera);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.Log("More then one instance: " + name);
+            Destroy(this);
+        }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        localPosition = (Vector3d)localCamera.position + localOriginPosition;
+        // Local space objects
+        localPosition = (Vector3d)localCamera.position + originPosition;
+
+        if (localCamera.position.magnitude > targetThreshold)
+        {
+            originPosition += (Vector3d)localCamera.position;
+
+            localCamera.position -= localCamera.position;
+        }
+
+        // Scaled space objects
         scaledPosition = (Vector3d)scaledCamera.position + scaledOriginPosition;
 
-        if (localCamera.position.magnitude > originThreshold)
+        if (scaledCamera.position.magnitude > targetThreshold)
         {
-            MoveOrigin(localCamera.position);
+            scaledOriginPosition += (Vector3d)scaledCamera.position;
         }
-
-        if (scaledCamera.position.magnitude > originThreshold)
-        {
-            MoveOriginScaled(scaledCamera.position);
-        }
-    }
-
-    private void MoveOrigin(Vector3 delta)
-    {
-        foreach (Transform target in localTransforms)
-        {
-            target.position -= delta;
-        }
-
-        localOriginPosition += (Vector3d)delta;
-    }
-
-    private void MoveOriginScaled(Vector3 delta)
-    {
-        foreach (Transform target in scaledTransforms)
-        {
-            target.position -= delta;
-        }
-
-        scaledOriginPosition += (Vector3d)delta;
-    }
-
-    public void RegisterTransform(Transform target)
-    {
-        localTransforms.Add(target);
-    }
-
-    public void RegisterTransformScaled(Transform target)
-    {
-        scaledTransforms.Add(target);
     }
 }
