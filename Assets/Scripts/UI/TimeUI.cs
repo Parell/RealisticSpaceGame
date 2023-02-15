@@ -6,7 +6,6 @@ public class TimeUI : MonoBehaviour
     public SimulationController simulationController;
     public int timeScale = 0;
     public static int timeIndex;
-    public int maxTimeIndex = 6;
     public Text timeText;
     public int[] timeScales;
     public GameObject[] timeVisuals;
@@ -26,13 +25,15 @@ public class TimeUI : MonoBehaviour
 
         var days = totalSecs / (24 * 3600);
         var years = days / 365;
-        var hours = totalSecs / 3600;
+        var hours = (totalSecs / 3600) - days * 24;
         var minutes = (totalSecs % 3600) / 60;
         var seconds = totalSecs % 60;
 
-        var timeString = string.Format("{4}y {3}d {0}:{1}:{2}", hours.ToString("D2"), minutes.ToString("D2"), seconds.ToString("D2"), days.ToString("D3"), years.ToString("D3"));
+        var timeString = string.Format("{4}y {3}d {2}:{1}:{0}", seconds.ToString("D2"), minutes.ToString("D2"), hours.ToString("D2"), days.ToString("D3"), years.ToString("D3"));
 
         timeText.text = "UT " + timeString;
+
+        var maxTimeIndex = timeScales.Length - 1;
 
         if (Input.GetKeyUp(fasterTimeKeyCode))
         {
